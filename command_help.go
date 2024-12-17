@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func commandHelp() error {
+func commandHelp(cfg *config) error {
 	var cmdOutput string
 	for _, cmd := range getSupportedCommands() {
 		cmdOutput += fmt.Sprintf("%s: %s\n", cmd.name, cmd.description)
