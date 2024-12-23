@@ -42,12 +42,12 @@ func (c *Client) GetLocation(name string) (Location, error) {
 		return Location{}, err
 	}
 
-	var locationsAreaResponse Location
-	err = json.Unmarshal(data, &locationsAreaResponse)
+	var locationResponse Location
+	err = json.Unmarshal(data, &locationResponse)
 	if err != nil {
 		return Location{}, err
 	}
 
 	c.cache.Add(url, data)
-	return locationsAreaResponse, nil
+	return locationResponse, nil
 }
