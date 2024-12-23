@@ -6,6 +6,10 @@ import (
 )
 
 func commandMapf(cfg *config, args ...string) error {
+	if len(args) > 0 {
+		return errors.New("too many arguments")
+	}
+
 	locationAreasResp, err := cfg.pokeapiClient.ListLocationAreas(cfg.nextLocationsURL)
 	if err != nil {
 		return err
@@ -22,6 +26,10 @@ func commandMapf(cfg *config, args ...string) error {
 }
 
 func commandMapb(cfg *config, args ...string) error {
+	if len(args) > 0 {
+		return errors.New("too many arguments")
+	}
+
 	if cfg.previousLocationsURL == nil {
 		return errors.New("you're on the first page")
 	}
