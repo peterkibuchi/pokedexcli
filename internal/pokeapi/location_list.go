@@ -2,6 +2,8 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 )
@@ -10,6 +12,17 @@ func (c *Client) ListLocationAreas(pageUrl *string) (LocationAreasResponse, erro
 	url := baseUrl + "/location-area"
 	if pageUrl != nil {
 		url = *pageUrl
+	}
+
+	if val, ok := c.cache.Get(url); ok {
+		locationsResp := LocationAreasResponse{}
+		err := json.Unmarshal(val, &locationsResp)
+		if err != nil {
+			return LocationAreasResponse{}, err
+		}
+
+		fmt.Println("-> showing cached results...")
+		return locationsResp, nil
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -27,11 +40,17 @@ func (c *Client) ListLocationAreas(pageUrl *string) (LocationAreasResponse, erro
 	}
 	defer res.Body.Close()
 
-	var locationsAreaResponse LocationAreasResponse
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&locationsAreaResponse); err != nil {
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
 		return LocationAreasResponse{}, err
 	}
 
+	var locationsAreaResponse LocationAreasResponse
+	err = json.Unmarshal(data, &locationsAreaResponse)
+	if err != nil {
+		return LocationAreasResponse{}, err
+	}
+
+	c.cache.Add(url, data)
 	return locationsAreaResponse, nil
 }
