@@ -31,26 +31,17 @@ func startRepl(cfg *config) {
 		}
 
 		commandName := words[0]
+		args := []string{}
+		if len(words) > 1 {
+			args = words[1:]
+		}
 
-		supportedCommands := getSupportedCommands()
-		if command, exists := supportedCommands[commandName]; exists {
-			if command.name == "explore" {
-				if len(words) < 2 {
-					fmt.Println("this command needs an area to explore")
-					continue
-				}
-				param := words[1]
-				err := command.callback(cfg, &param)
-				if err != nil {
-					fmt.Println(err)
-				}
-			} else {
-				err := command.callback(cfg, nil)
-				if err != nil {
-					fmt.Println(err)
-				}
+		command, exists := getSupportedCommands()[commandName]
+		if exists {
+			err := command.callback(cfg, args...)
+			if err != nil {
+				fmt.Println(err)
 			}
-
 			continue
 		} else {
 			fmt.Println("Unknown command")
@@ -68,7 +59,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config, *string) error
+	callback    func(*config, ...string) error
 }
 
 func getSupportedCommands() map[string]cliCommand {
@@ -84,8 +75,8 @@ func getSupportedCommands() map[string]cliCommand {
 			callback:    commandHelp,
 		},
 		"explore": {
-			name:        "explore",
-			description: "Displays list of all the Pokémon located in a particular location area.",
+			name:        "explore <location_area>",
+			description: "Displays list of all the Pokémon located in a particular location area",
 			callback:    commandExplore,
 		},
 		"map": {
