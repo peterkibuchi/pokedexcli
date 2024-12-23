@@ -85,6 +85,11 @@ func getSupportedCommands() map[string]cliCommand {
 			description: "Displays list of all the Pokémon located in a particular location area",
 			callback:    commandExplore,
 		},
+		"inspect": {
+			name:        "inspect <pokemon_name>",
+			description: "Inspect a Pokémon in your pokedex",
+			callback:    commandInspect,
+		},
 		"map": {
 			name:        "map",
 			description: "Displays the names of 20 location areas in the Pokemon world",
